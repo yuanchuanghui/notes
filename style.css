@@ -1,0 +1,82 @@
+/* 全局样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333;
+  }
+  
+  a {
+    text-decoration: none;
+    color: #007bff;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  /* 头部样式 */
+  header {
+    background-color: #007bff;
+    color: #fff;
+    padding: 20px;
+  }
+  
+  h1 {
+    font-size: 32px;
+    margin: 0;
+  }
+  
+  /* 主体样式 */
+  /* 
+  flex-wrap属性设置为"nowrap"，那么"main"元素中的子元素将不会自动换行，而是尽可能地挤在一起显示，可能会导致子元素的内容被截断或者重叠
+   */
+  main {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 30px;
+  }
+  
+  section {
+    width: 45%;
+    margin-bottom: 30px;
+  }
+  
+  h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  li {
+    margin-bottom: 10px;
+  }
+  
+  /* 底部样式 */
+  footer {
+    background-color: #f8f9fa;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  p {
+    font-size: 14px;
+    margin: 0;
+  }
+  
+  #datetime {
+    font-weight: bold;
+    color: #007bff;
+  }
