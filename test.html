@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>内容效率神器 - RPA+豆包自动写头条</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#FF7D00',
+            dark: '#1D2939',
+            light: '#F9FAFB',
+            gray: {
+              100: '#F3F4F6',
+              200: '#E5E7EB',
+              300: '#D1D5DB',
+              400: '#9CA3AF',
+              500: '#6B7280',
+              600: '#4B5563',
+              700: '#374151',
+              800: '#1F2937',
+              900: '#111827',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .text-shadow {
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .card-hover {
+        transition: all 0.3s ease;
+      }
+      .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+      .gradient-bg {
+        background: linear-gradient(135deg, #165DFF 0%, #0A2463 100%);
+      }
+      .image-placeholder {
+        background: linear-gradient(145deg, #f0f0f0, #e0e0e0);
+        position: relative;
+      }
+      .image-placeholder::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24' fill='none' stroke='%23bbbbbb' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Ccircle cx='8.5' cy='8.5' r='1.5'%3E%3C/circle%3E%3Cpolyline points='21 15 16 10 5 21'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: center;
+        opacity: 0.5;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+  <!-- 导航栏 -->
+  <nav class="sticky top-0 z-50 bg-white shadow-md transition-all duration-300">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <i class="fa fa-robot text-primary text-2xl"></i>
+        <span class="font-bold text-xl text-primary">内容效率神器</span>
+      </div>
+      <div class="hidden md:flex space-x-8">
+        <a href="#intro" class="hover:text-primary transition-colors">什么是RPA</a>
+        <a href="#solution" class="hover:text-primary transition-colors">解决方案</a>
+        <a href="#process" class="hover:text-primary transition-colors">操作流程</a>
+        <a href="#tips" class="hover:text-primary transition-colors">实用技巧</a>
+      </div>
+      <button class="md:hidden text-gray-700">
+        <i class="fa fa-bars text-xl"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- 英雄区 -->
+  <header class="gradient-bg text-white py-16 md:py-24">
+    <div class="container mx-auto px-4">
+      <div class="max-w-3xl mx-auto text-center">
+        <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold leading-tight mb-6 text-shadow">
+          用RPA工具+豆包自动写头条文章
+        </h1>
+        <p class="text-[clamp(1.1rem,2vw,1.3rem)] mb-8 text-blue-100">
+          解放双手，告别重复劳动，省出更多时间专注创意
+        </p>
+        <div class="inline-block bg-white text-primary font-semibold px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
+          效率提升超100% <i class="fa fa-rocket ml-2"></i>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 痛点区域 -->
+  <section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="max-w-3xl mx-auto text-center mb-12">
+        <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4">内容创作的痛点，你是否也有？</h2>
+        <p class="text-gray-600 text-lg">想更新头条文章，从选题、生成内容到排版发布，每一步都要花好多时间，感觉时间根本不够用。</p>
+      </div>
+      
+      <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div class="bg-gray-50 p-6 rounded-xl shadow card-hover">
+          <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+            <i class="fa fa-clock-o text-primary text-xl"></i>
+          </div>
+          <h3 class="font-bold text-xl mb-2">耗时费力</h3>
+          <p class="text-gray-600">重复的排版和发布流程占用大量时间</p>
+        </div>
+        
+        <div class="bg-gray-50 p-6 rounded-xl shadow card-hover">
+          <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+            <i class="fa fa-refresh text-primary text-xl"></i>
+          </div>
+          <h3 class="font-bold text-xl mb-2">机械重复</h3>
+          <p class="text-gray-600">相同的操作流程每天重复多次</p>
+        </div>
+        
+        <div class="bg-gray-50 p-6 rounded-xl shadow card-hover">
+          <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+            <i class="fa fa-bolt text-primary text-xl"></i>
+          </div>
+          <h3 class="font-bold text-xl mb-2">效率低下</h3>
+          <p class="text-gray-600">难以达到日更上限，错过流量机会</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RPA简介 -->
+  <section id="intro" class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center mb-6">
+          <div class="w-10 h-1 bg-primary rounded-full mr-3"></div>
+          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold">什么是RPA？</h2>
+        </div>
+        
+        <div class="bg-white p-8 rounded-2xl shadow-md mb-8">
+          <p class="text-lg text-gray-700 mb-4">
+            可能有人第一次听说 RPA，它的全称是<strong class="text-primary">机器人流程自动化（Robotic Process Automation）</strong>。
+          </p>
+          <p class="text-lg text-gray-700 mb-6">
+            简单说就是：<strong>让软件机器人模仿人的操作，在电脑上自动完成那些规则固定、重复度高的任务。</strong>
+          </p>
+          
+          <!-- RPA示意图：替换下方src链接 -->
+          <div class="mb-8">
+            <h4 class="font-semibold text-gray-800 mb-3">RPA工作示意图</h4>
+            <div class="relative image-placeholder rounded-xl overflow-hidden h-64 md:h-80">
+              <!-- 替换此处的链接为RPA工作示意图 -->
+              <img src="https://suoqi-1318874292.cos.ap-beijing.myqcloud.com/suoqi/note-img/202510261453054.png?imageSlim" alt="RPA工作示意图" class="w-full h-full object-contain">
+            </div>
+            <!-- 提示：在此处替换img的src属性值为实际图片链接 -->
+          </div>
+          
+          <div class="mt-8 bg-gray-50 p-6 rounded-xl border border-gray-200">
+            <div class="flex items-center mb-4">
+              <i class="fa fa-lightbulb-o text-secondary text-xl mr-3"></i>
+              <h3 class="font-bold text-xl">RPA的核心价值</h3>
+            </div>
+            <ul class="space-y-3">
+              <li class="flex items-start">
+                <i class="fa fa-check-circle text-primary mt-1 mr-2"></i>
+                <span>自动化重复劳动，减少人工操作</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fa fa-check-circle text-primary mt-1 mr-2"></i>
+                <span>提高工作效率，缩短完成时间</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fa fa-check-circle text-primary mt-1 mr-2"></i>
+                <span>降低人为错误，提高内容质量</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fa fa-check-circle text-primary mt-1 mr-2"></i>
+                <span>无需编程知识，拖拽即可搭建流程</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        
+        <!-- RPA工具对比 -->
+        <div class="bg-white p-8 rounded-2xl shadow-md">
+          <h3 class="font-bold text-xl mb-4">RPA工具对比</h3>
+          <p class="text-gray-700 mb-6">用了八爪鱼和影刀进行对比了一下，两个都进行使用了，相对来说，<strong class="text-primary">八爪鱼的流畅度要更好。</strong></p>
+          
+          <!-- 工具对比图片：替换下方src链接 -->
+          <div class="mb-6">
+            <h4 class="font-semibold text-gray-800 mb-3">工具对比界面截图</h4>
+            <div class="relative image-placeholder rounded-xl overflow-hidden h-64 md:h-80">
+              <!-- 替换此处的链接为工具对比截图 -->
+              <img src="https://suoqi-1318874292.cos.ap-beijing.myqcloud.com/suoqi/note-img/202510261446483.png?imageSlim" alt="RPA工具对比截图" class="w-full h-full object-contain">
+            </div>
+            <!-- 提示：在此处替换img的src属性值为实际图片链接 -->
+          </div>
+          
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="border border-gray-200 rounded-xl p-5 hover:border-primary transition-colors">
+              <div class="font-bold text-lg mb-2 flex items-center">
+                <i class="fa fa-star text-yellow-400 mr-2"></i>八爪鱼RPA
+              </div>
+              <p class="text-gray-600">流畅度好，操作便捷，适合内容创作自动化</p>
+            </div>
+            <div class="border border-gray-200 rounded-xl p-5 hover:border-primary transition-colors">
+              <div class="font-bold text-lg mb-2 flex items-center">
+                <i class="fa fa-star text-yellow-400 mr-2"></i>影刀RPA
+              </div>
+              <p class="text-gray-600">功能丰富，适合复杂流程自动化场景</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 解决方案 -->
+  <section id="solution" class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center mb-6">
+          <div class="w-10 h-1 bg-primary rounded-full mr-3"></div>
+          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold">RPA+豆包自动化方案</h2>
+        </div>
+        
+        <div class="bg-primary/5 p-8 rounded-2xl border border-primary/20 mb-8">
+          <p class="text-lg mb-6">
+            最近研究并搭建了一些内容，我用它也做了个自动化写头条文章的流程，<strong class="text-primary">不需要接入API，利用豆包+RPA即可制作，全程是免费的。</strong>
+          </p>
+          
+          <p class="text-lg mb-4">
+            能把好多重复又耗时的步骤都交给程序去做，咱们只需要把控核心Prompt就行。
+          </p>
+          
+          <div class="bg-white p-4 rounded-lg border-l-4 border-secondary inline-block mt-2">
+            <p class="text-gray-700"><i class="fa fa-info-circle text-secondary mr-2"></i>公众号写作不建议用RPA写作</p>
+          </div>
+        </div>
+        
+        <!-- 变量设置 -->
+        <div class="mb-8">
+          <h3 class="font-bold text-xl mb-4">核心变量设置</h3>
+          <p class="text-gray-700 mb-4">这边一共设置了4个变量，分别是：</p>
+          
+          <div class="grid md:grid-cols-2 gap-4 mb-6">
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <div class="font-semibold">初始正文Prompt</div>
+              <p class="text-sm text-gray-600">定义文章的基本风格和内容方向</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <div class="font-semibold">后期正文Prompt</div>
+              <p class="text-sm text-gray-600">调整话题角度，保持语气一致</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <div class="font-semibold">初始标题</div>
+              <p class="text-sm text-gray-600">文章标题的基础模板</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <div class="font-semibold">后期标题</div>
+              <p class="text-sm text-gray-600">根据内容调整的标题变体</p>
+            </div>
+          </div>
+          
+          <div class="bg-gray-50 p-5 rounded-lg border border-gray-200">
+            <h4 class="font-semibold mb-2">为什么要设置后期Prompt？</h4>
+            <p class="text-gray-700">
+              因为刚开始的话输出的文章是比较重要的，而后期的Prompt完全可以让他换个话题或者角度，语气不变，不需要重新写一大堆提示词，只需要让他换个方向或者汲取最近不同的热点即可。
+            </p>
+          </div>
+          
+          <!-- 变量设置截图：替换下方src链接 -->
+          <div class="mt-6">
+            <h4 class="font-semibold text-gray-800 mb-3">变量设置界面截图</h4>
+            <div class="relative image-placeholder rounded-xl overflow-hidden h-64 md:h-80">
+              <!-- 替换此处的链接为变量设置界面截图 -->
+              <img src="https://suoqi-1318874292.cos.ap-beijing.myqcloud.com/suoqi/note-img/202510261454206.png?imageSlim" alt="变量设置界面截图" class="w-full h-full object-contain">
+            </div>
+            <!-- 提示：在此处替换img的src属性值为实际图片链接 -->
+          </div>
+        </div>
+        
+        <!-- 自动化流程 -->
+        <div>
+          <h3 class="font-bold text-xl mb-4">自动化流程概述</h3>
+          <p class="text-gray-700 mb-6">
+            就像这次我做的头条文章自动化 —— 从打开头条文章页面、调用大模型生成内容，到自动填充标题、正文，都能由 RPA 自动完成。
+          </p>
+          
+          <div class="relative">
+            <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+            
+            <div class="relative pl-12 pb-8">
+              <div class="absolute left-0 w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center">1</div>
+              <h4 class="font-semibold text-lg mb-1">打开头条文章页面</h4>
+              <p class="text-gray-600">自动导航到头条创作平台</p>
+            </div>
+            
+            <div class="relative pl-12 pb-8">
+              <div class="absolute left-0 w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center">2</div>
+              <h4 class="font-semibold text-lg mb-1">调用豆包生成内容</h4>
+              <p class="text-gray-600">根据预设Prompt自动生成文章</p>
+            </div>
+            
+            <div class="relative pl-12 pb-8">
+              <div class="absolute left-0 w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center">3</div>
+              <h4 class="font-semibold text-lg mb-1">自动填充内容</h4>
+              <p class="text-gray-600">将生成的标题和正文填入编辑器</p>
+            </div>
+            
+            <div class="relative pl-12 pb-8">
+              <div class="absolute left-0 w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center">4</div>
+              <h4 class="font-semibold text-lg mb-1">完成发布准备</h4>
+              <p class="text-gray-600">自动完成排版，等待最终确认</p>
+            </div>
+          </div>
+          
+          <!-- 流程截图：替换下方src链接 -->
+          <div class="mt-8 grid md:grid-cols-2 gap-6">
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-3">自动化流程截图1</h4>
+              <div class="relative image-placeholder rounded-xl overflow-hidden h-56">
+                <!-- 替换此处的链接为流程截图1 -->
+                <img src="https://suoqi-1318874292.cos.ap-beijing.myqcloud.com/suoqi/note-img/202510261456063.png?imageSlim" alt="自动化流程截图1" class="w-full h-full object-contain">
+              </div>
+              <!-- 提示：在此处替换img的src属性值为实际图片链接 -->
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-3">自动化流程截图2</h4>
+              <div class="relative image-placeholder rounded-xl overflow-hidden h-56">
+                <!-- 替换此处的链接为流程截图2 -->
+                <img src="https://suoqi-1318874292.cos.ap-beijing.myqcloud.com/suoqi/note-img/202510261500699.png?imageSlim" alt="自动化流程截图2" class="w-full h-full object-contain">
+              </div>
+              <!-- 提示：在此处替换img的src属性值为实际图片链接 -->
+            </div>
+          </div>
+          
+          <div class="mt-6 p-4 bg-green-50 rounded-lg border border-green-200">
+            <p class="text-green-800"><i class="fa fa-check-circle mr-2"></i>设置好流程，十几分钟就能搞定每天的上限篇数，效率显著提升！</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 技术细节 -->
+  <section id="process" class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center mb-6">
+          <div class="w-10 h-1 bg-primary rounded-full mr-3"></div>
+          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold">核心技术细节</h2>
+        </div>
+        
+        <div class="bg-white p-8 rounded-2xl shadow-md mb-8">
+          <h3 class="font-bold text-xl mb-4">豆包编辑页面跳转问题</h3>
+          <p class="text-gray-700 mb-4">
+            在豆包经常写作的伙伴应该会注意到，生成文章后，有时候他会自动跳转到编辑页面，有时候不会。
+          </p>
+          
+          <div class="grid md:grid-cols-2 gap-6 mb-6">
+            <div class="border border-gray-200 rounded-lg p-4">
+              <h4 class="font-semibold mb-2">未跳转状态</h4>
+              <p class="text-sm text-gray-600">底部有编辑按钮，点击后进入双栏编辑页面</p>
+              <div class="relative image-placeholder rounded-lg overflow-hidden h-40 mt-3">
+                <!-- 替换此处的链接为未跳转状态截图 -->
+                <img src="https://suoqi-1318874292.cos.ap-beijing.myqcloud.com/suoqi/note-img/202510261508262.png?imageSlim" alt="未跳转状态截图" class="w-full h-full object-contain">
+              </div>
+              <!-- 提示：在此处替换img的src属性值为实际图片链接 -->
+            </div>
+            <div class="border border-gray-200 rounded-lg p-4">
+              <h4 class="font-semibold mb-2">跳转后状态</h4>
+              <p class="text-sm text-gray-600">显示双栏页面，右侧为编辑区域</p>
+              <div class="relative image-placeholder rounded-lg overflow-hidden h-40 mt-3">
+                <!-- 替换此处的链接为跳转后状态截图 -->
+                <img src="https://suoqi-1318874292.cos.ap-beijing.myqcloud.com/suoqi/note-img/202510261500699.png?imageSlim" alt="跳转后状态截图" class="w-full h-full object-contain">
+              </div>
+              <!-- 提示：在此处替换img的src属性值为实际图片链接 -->
+            </div>
+          </div>
+          
+          <p class="text-gray-700 mb-4">
+            如果是跳转后，会发现是双栏的页面，也就是右边增加了一个编辑页面。
+          </p>
+          
+          <!-- 双栏编辑页面截图：替换下方src链接 -->
+          <div class="mb-6">
+            <h4 class="font-semibold text-gray-800 mb-3">双栏编辑页面截图</h4>
+            <div class="relative image-placeholder rounded-xl overflow-hidden h-64">
+              <!-- 替换此处的链接为双栏编辑页面截图 -->
+              <img src="https://suoqi-1318874292.cos.ap-beijing.myqcloud.com/suoqi/note-img/202510261500699.png?imageSlim" alt="双栏编辑页面截图" class="w-full h-full object-contain">
+            </div>
+            <!-- 提示：在此处替换img的src属性值为实际图片链接 -->
+          </div>
+        </div>
+        
+        <!-- 解决方案 -->
+        <div class="bg-white p-8 rounded-2xl shadow-md">
+          <h3 class="font-bold text-xl mb-4">解决方案：编辑按钮点击优化</h3>
+          <p class="text-gray-700 mb-4">
+            我们需要加上一个点击编辑按钮的操作，但用多了你会发现一个Bug：编辑按钮有多个，不止底部一个，有时候生成的文章上文中也可能出现编辑按钮，导致RPA自动点击上篇文章的编辑按钮。
+          </p>
+          
+          <!-- 多编辑按钮问题截图：替换下方src链接 -->
+          <div class="mb-6">
+            <h4 class="font-semibold text-gray-800 mb-3">多编辑按钮问题截图</h4>
+            <div class="relative image-placeholder rounded-xl overflow-hidden h-64">
+              <!-- 替换此处的链接为多编辑按钮问题截图 -->
+              <img src="https://suoqi-1318874292.cos.ap-beijing.myqcloud.com/suoqi/note-img/202510261509445.png?imageSlim" alt="多编辑按钮问题截图" class="w-full h-full object-contain">
+            </div>
+            <!-- 提示：在此处替换img的src属性值为实际图片链接 -->
+          </div>
+          
+          <div class="bg-gray-50 p-5 rounded-lg border border-gray-200 mb-6">
+            <h4 class="font-semibold mb-3">关键发现</h4>
+            <p class="text-gray-700 mb-2">
+              经过对比，最后一篇文章会多一个"重新生成"的按钮，这是区分新旧文章的关键标志。
+            </p>
+            <div class="relative image-placeholder rounded-lg overflow-hidden h-32 mt-3">
+              <!-- 替换此处的链接为重新生成按钮截图 -->
+              <img src="https://suoqi-1318874292.cos.ap-beijing.myqcloud.com/suoqi/note-img/202510261511052.png?imageSlim" alt="重新生成按钮截图" class="w-full h-full object-contain">
+            </div>
+            <!-- 提示：在此处替换img的src属性值为实际图片链接 -->
+          </div>
+          
+          <!-- 重新生成按钮位置示意图：替换下方src链接 -->
+          <div class="mb-6">
+            <h4 class="font-semibold text-gray-800 mb-3">重新生成按钮位置示意图</h4>
+            <div class="relative image-placeholder rounded-xl overflow-hidden h-64">
+              <!-- 替换此处的链接为重新生成按钮位置示意图 -->
+              <img src="https://suoqi-1318874292.cos.ap-beijing.myqcloud.com/suoqi/note-img/202510261511052.png?imageSlim" alt="重新生成按钮位置示意图" class="w-full h-full object-contain">
+            </div>
+            <!-- 提示：在此处替换img的src属性值为实际图片链接 -->
+          </div>
+          
+          <div class="p-4 bg-primary/10 rounded-lg border border-primary/20">
+            <h4 class="font-semibold text-primary mb-2">优化方案</h4>
+            <p class="text-gray-700">
+              为了避免RPA点击错误，我们仅需判断是否有重新生成按钮即可，根据重新生成按钮的位置，精准点击对应的编辑按钮。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 效率提升与建议 -->
+  <section id="tips" class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center mb-6">
+          <div class="w-10 h-1 bg-primary rounded-full mr-3"></div>
+          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold">效率提升与实用建议</h2>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-8 mb-12">
+          <div class="bg-gray-50 p-6 rounded-xl shadow card-hover">
+            <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center mb-4">
+              <i class="fa fa-line-chart text-secondary text-xl"></i>
+            </div>
+            <h3 class="font-bold text-xl mb-3">效率提升效果</h3>
+            <p class="text-gray-700 mb-4">
+              把这个自动化头条文章的流程搭好后，效率直接翻了一大倍。
+            </p>
+            <p class="text-gray-700 mb-3">
+              全部流程优化后大约100行左右的流程代码，简单高效。
+            </p>
+            <div class="relative image-placeholder rounded-lg overflow-hidden h-36 mt-3">
+              <!-- 替换此处的链接为流程代码示意图 -->
+              <img src="" alt="流程代码示意图" class="w-full h-full object-contain">
+            </div>
+            <!-- 提示：在此处替换img的src属性值为实际图片链接 -->
+          </div>
+          
+          <div class="bg-gray-50 p-6 rounded-xl shadow card-hover">
+            <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center mb-4">
+              <i class="fa fa-lightbulb-o text-secondary text-xl"></i>
+            </div>
+            <h3 class="font-bold text-xl mb-3">内容创作建议</h3>
+            <ul class="space-y-3 text-gray-700">
+              <li class="flex items-start">
+                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                <span>如果流量不太好，建议养一些小号</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                <span>专注垂直账号，内容更聚焦</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                <span>建议不要做教学内容，做新闻、热点等</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                <span>这样起号会比较快，且有流量主收益</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        
+        <!-- 总结 -->
+        <div class="bg-gradient-to-r from-primary/90 to-primary p-8 rounded-2xl text-white">
+          <h3 class="font-bold text-2xl mb-4">总结</h3>
+          <p class="mb-4 text-white/90">
+            现在做内容，不光要拼创意，还要拼效率。有了这些自动化工具，相当于给自己配了个数字助手，能把机械性的工作全扛下来。
+          </p>
+          <p class="mb-4 text-white/90">
+            而且八爪鱼 RPA 这种工具，不用写复杂代码，拖拖拽拽就能搭流程，对非技术出身的内容人也特别友好。
+          </p>
+          <p class="mb-6 text-white/90">
+            核心的创意、观点还是得咱们自己来，RPA 只是帮咱们把执行的环节自动化了。
+          </p>
+          <p class="text-lg font-semibold">
+            可以说，市面上80%以上的重复性内容，都可以考虑借助AI进行效率提升，甚至颠覆操作。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 互动区域 -->
+  <section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <div class="max-w-2xl mx-auto text-center">
+        <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold mb-6">有疑问？留言交流</h2>
+        <p class="text-gray-600 mb-8">如果大家也被内容生产的重复工作搞得头疼，可以试一下这个方案。有什么不懂的可以进行留言交流。</p>
+        
+        <form class="bg-white p-6 rounded-xl shadow-md">
+          <div class="mb-4">
+            <label for="name" class="block text-left text-gray-700 mb-2">姓名</label>
+            <input type="text" id="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="请输入您的姓名">
+          </div>
+          <div class="mb-4">
+            <label for="question" class="block text-left text-gray-700 mb-2">您的问题</label>
+            <textarea id="question" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="请输入您的问题或想法"></textarea>
+          </div>
+          <button type="submit" class="w-full bg-primary text-white font-semibold py-3 px-6 rounded-lg hover:bg-primary/90 transition-colors">提交留言</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- 页脚 -->
+  <footer class="bg-gray-800 text-white py-12">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+          <div class="flex items-center mb-6 md:mb-0">
+            <i class="fa fa-robot text-primary text-2xl mr-2"></i>
+            <span class="font-bold text-xl">内容效率神器</span>
+          </div>
+          <div class="flex space-x-6">
+            <a href="#" class="hover:text-primary transition-colors"><i class="fa fa-weixin text-xl"></i></a>
+            <a href="#" class="hover:text-primary transition-colors"><i class="fa fa-weibo text-xl"></i></a>
+            <a href="#" class="hover:text-primary transition-colors"><i class="fa fa-github text-xl"></i></a>
+          </div>
+        </div>
+        <div class="border-t border-gray-700 pt-8 text-center text-gray-400">
+          <p>© 2023 内容效率神器 - RPA+豆包自动化方案分享</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 回到顶部按钮 -->
+  <button id="backToTop" class="fixed bottom-6 right-6 bg-primary text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center opacity-0 invisible transition-all duration-300">
+    <i class="fa fa-arrow-up"></i>
+  </button>
+
+  <script>
+    // 回到顶部按钮
+    const backToTopBtn = document.getElementById('backToTop');
+    
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) {
+        backToTopBtn.classList.remove('opacity-0', 'invisible');
+        backToTopBtn.classList.add('opacity-100', 'visible');
+      } else {
+        backToTopBtn.classList.remove('opacity-100', 'visible');
+        backToTopBtn.classList.add('opacity-0', 'invisible');
+      }
+    });
+    
+    backToTopBtn.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+    
+    // 平滑滚动
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+        
+        if (targetElement) {
+          targetElement.scrollIntoView({
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+    
+    // 导航栏滚动效果
+    const nav = document.querySelector('nav');
+    let lastScrollY = window.scrollY;
+    
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 100) {
+        nav.classList.add('py-2', 'shadow-lg');
+        nav.classList.remove('py-3', 'shadow-md');
+      } else {
+        nav.classList.add('py-3', 'shadow-md');
+        nav.classList.remove('py-2', 'shadow-lg');
+      }
+      
+      lastScrollY = window.scrollY;
+    });
+  </script>
+</body>
+</html>
